@@ -2,13 +2,13 @@ from pydantic import BaseModel
 from typing import Optional
 
 class UserSchema(BaseModel):
-    id: int
+    id: str
     username: str
 
     model_config = {"from_attributes": True}  # allows mapping from SQLAlchemy model
 
 class LoginRequest(BaseModel):
-    username: str
+    email: str
     password: str
 
 class LoginResponse(BaseModel):

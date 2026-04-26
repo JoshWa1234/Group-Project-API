@@ -1,9 +1,9 @@
-from utils.auth_utils import verifyPassword, generateAuthToken,hashPassword,validatePassword
+from utils.auth_utils import verifyPassword, generateAuthToken,hashPassword,validatePassword,gerateNewID
 from schema.auth_schema import LoginRequest, LoginResponse, UserSchema
 from repositories.auth_repo import UserRepository
 from sqlalchemy.orm import Session
 from fastapi import Response
-from config import Settings
+from config import settings
 from models.auth_model import Users
 from datetime import datetime
 class AuthService:
@@ -11,7 +11,7 @@ class AuthService:
 
     def login(self, db: Session, loginRequest: LoginRequest, response: Response):
         #check user exists
-        user = self.authRepo.get_user_by_username(db, loginRequest.username)
+        user = self.authRepo.get_user_by_username(db, loginRequest.email)
         if user is None:
             return LoginResponse(
                 errorMessage="Username or password was incorrect",
@@ -43,7 +43,7 @@ class AuthService:
         return token
     def signUp(self, db: Session, loginRequest: LoginRequest, response: Response):
         #check user exists
-        default_user_type = Settings.default_user_type_id
+        default_user_type = settings.default_user_type_id
 
         if not validatePassword(loginRequest.password):
             return LoginResponse(
@@ -54,10 +54,11 @@ class AuthService:
         hashed_pass = hashPassword(loginRequest.password)
         
         newUser = Users(
-            username=loginRequest.username,
+            id=gerateNewID(),
+            username=loginRequest.email,
             user_type_id=default_user_type,
             password_hash=hashed_pass,
-            email='',
+            email=loginRequest.email,
             created_at=datetime.now(),
             updated_at=datetime.now()
             )
