@@ -15,3 +15,12 @@ def login(
 ):
     result = service.login(db, loginRequest, response)
     return result
+
+@router.post("/sign_up")
+def createUser(
+    loginRequest: LoginRequest,
+    response: Response,
+    db: Session = Depends(get_db)
+    ):
+    result = service.signUp(db, loginRequest, response)
+    return result

@@ -1,6 +1,7 @@
 import uuid
 import bcrypt
 import secrets
+import re
 
 def hashPassword(password: str) -> str:
     pw_bytes = password.encode("utf-8")
@@ -11,6 +12,10 @@ def hashPassword(password: str) -> str:
 def verifyPassword(password: str, stored_hash: str) -> bool:
     success = bcrypt.checkpw(password.encode("utf-8"), stored_hash.encode("utf-8"))
     return success
+
+def validate_password(password: str) -> bool:
+    pattern = r'^(?=.*[A-Z])(?=(?:.*[a-z]){6,})(?=.*[!@#$%^&*(),.?":{}|<>])(?=.*\d).{1,32}$'
+    return bool(re.match(pattern, password))
 
 def gerateNewID():
     return str(uuid.uuid4())

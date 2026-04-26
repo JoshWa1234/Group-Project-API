@@ -1,0 +1,1 @@
+INSERT INTO user_types VALUES (2, 'Staff')
