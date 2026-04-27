@@ -1,1 +1,1 @@
-INSERT INTO user_types VALUES (2, 'Staff')
+INSERT INTO user_types VALUES (3, 'Team Leader')
