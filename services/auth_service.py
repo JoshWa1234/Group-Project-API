@@ -6,6 +6,7 @@ from fastapi import Response
 from config import settings
 from models.auth_model import Users
 from datetime import datetime
+from typing import Any
 class AuthService:
     authRepo = UserRepository()
 
@@ -24,22 +25,31 @@ class AuthService:
                 statusCode=401
             )
         #set token for sessions
-        self.setUpToken(response)
+        self.setUpToken(response, user.id, db)
 
         return LoginResponse(
-            user=UserSchema.model_validate(user),
-            statusCode=200
+            user=UserSchema.model_validate(user), # validates against datbase model
+            statusCode=200 # success code
         )
-    def setUpToken(self, response: Response):
+    def delete_session(self,db: Session, session_token: Any, response: Response):
+        #Deletes database session
+        self.authRepo.delete_session(db, session_token)
+        #Deletes the HTTP Cookie 
+        response.delete_cookie("session_token")
+        
+        return {"message": "Logged out"}
+    
+    def setUpToken(self, response: Response, userId: str, db: Session):
         token = generateAuthToken()
         response.set_cookie(
             key="session_token",
             value=token,
             httponly=True,
-            secure=True,
+            secure=settings.environment == 'production',
             samesite="lax",
             max_age=60 * 60
         )
+        self.authRepo.save_session(db, userId, token)
         return token
     def signUp(self, db: Session, loginRequest: LoginRequest, response: Response):
         #check user exists

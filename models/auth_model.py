@@ -26,3 +26,12 @@ class Sessions(Base):
     session_token = Column(String)
     expires_at = Column(DateTime)
     created_at = Column(DateTime)
+
+class UserProfie(Base):
+    __tablename__ = "user_profile"
+    id = Column(Integer, nullable=False, primary_key=True)
+    user_id = Column(String, ForeignKey("users.id"))                                             
+    display_name = Column(String)
+    profile_picture = Column(String)
+    updated_at = Column(DateTime)
+
