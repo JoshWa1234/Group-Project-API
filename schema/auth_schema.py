@@ -4,7 +4,7 @@ from typing import Optional
 class UserSchema(BaseModel):
     id: str
     username: str
-
+    user_type_id: int
     model_config = {"from_attributes": True}  # allows mapping from SQLAlchemy model
 
 class LoginRequest(BaseModel):
