@@ -43,3 +43,15 @@ class UserRepository:
     def delete_session(self, db: Session, token: str):
         db.query(Sessions).filter(Sessions.session_token == token).delete()
         db.commit()
+
+    def update_user_profile(self, db: Session, userId: str, displayName: str):
+        profile = db.query(UserProfie).filter(UserProfie.user_id == userId).first()
+        profile.display_name = displayName
+        db.commit()
+        db.refresh(profile)
+        return profile
+    
+    def update_password(self, db: Session, userId: str, newPassword: str):
+        user = db.query(Users).filter(Users.id == userId).first()
+        user.password_hash = newPassword
+        db.commit()

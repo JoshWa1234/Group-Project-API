@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, Request, HTTPException
 
-from schema.user_schema import UserProfileResponse
+from schema.user_schema import UserProfileResponse,UpdateProfileRequest
 from sqlalchemy.orm import Session
 from services.user_service import UserService
 from dependencies import get_current_session
@@ -26,3 +26,12 @@ def userProfile(
 
     return response
     
+
+@router.put("/userProfile/{userID}", response_model=UserProfileResponse)
+def updateProfile(
+    userID: str,
+    updateRequest: UpdateProfileRequest,
+    db: Session = Depends(get_db),
+    session = Depends(get_current_session)
+):
+    return service.updateUserProfile(db, userID, updateRequest)

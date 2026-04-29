@@ -30,7 +30,8 @@ class Sessions(Base):
 class UserProfie(Base):
     __tablename__ = "user_profile"
     id = Column(Integer, nullable=False, primary_key=True)
-    user_id = Column(String, ForeignKey("users.id"))                                             
+    user_id = Column(String, ForeignKey("users.id"))             
+    user = relationship("Users")                                 
     display_name = Column(String)
     profile_picture = Column(String)
     updated_at = Column(DateTime)

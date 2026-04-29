@@ -15,3 +15,7 @@ class LoginResponse(BaseModel):
     user: Optional[UserSchema] = None
     errorMessage: str = ""
     statusCode: int = 200
+
+class ResetPasswordRequest(BaseModel):
+    currentPassword: str
+    newPassword: str

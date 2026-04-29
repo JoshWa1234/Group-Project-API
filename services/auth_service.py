@@ -1,8 +1,8 @@
 from utils.auth_utils import verifyPassword, generateAuthToken,hashPassword,validatePassword,gerateNewID
-from schema.auth_schema import LoginRequest, LoginResponse, UserSchema
+from schema.auth_schema import LoginRequest, LoginResponse, UserSchema, ResetPasswordRequest
 from repositories.auth_repo import UserRepository
 from sqlalchemy.orm import Session
-from fastapi import Response
+from fastapi import Response, HTTPException
 from config import settings
 from models.auth_model import Users
 from datetime import datetime
@@ -82,3 +82,14 @@ class AuthService:
             user=UserSchema.model_validate(newUser),
             statusCode=200
         )
+    def resetPassword(self, db: Session, userId: str, resetRequest: ResetPasswordRequest):
+        user = self.authRepo.get_user_by_id(db, userId)
+        if user is None:
+            raise HTTPException(status_code=404, detail="User not found")
+
+        if not verifyPassword(resetRequest.currentPassword, user.password_hash):
+            raise HTTPException(status_code=401, detail="Current password is incorrect")
+
+        newPassword = hashPassword(resetRequest.newPassword)
+        self.authRepo.update_password(db, userId,newPassword )
+        return {"message": "Password updated successfully"}

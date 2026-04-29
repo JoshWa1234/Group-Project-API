@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, Response
-from schema.auth_schema import LoginResponse, LoginRequest
+from schema.auth_schema import LoginResponse, LoginRequest, ResetPasswordRequest
 from sqlalchemy.orm import Session
 from services.auth_service import AuthService
 from database.db import get_db
@@ -33,3 +33,12 @@ def logout(response: Response,
             ):
     response = service.delete_session(db, session.session_token, response)
     return response
+
+@router.put("/resetPassword/{userID}")
+def resetPassword(
+    userID: str,
+    resetRequest: ResetPasswordRequest,
+    db: Session = Depends(get_db),
+    session = Depends(get_current_session)
+):
+    return service.resetPassword(db, userID, resetRequest)
