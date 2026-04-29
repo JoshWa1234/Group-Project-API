@@ -16,3 +16,10 @@ def get_current_session(request: Request, db: Session = Depends(get_db)):
         raise HTTPException(status_code=401, detail="Invalid or expired session")
 
     return session
+
+
+# dependencies.py - add this
+def get_admin_session(session = Depends(get_current_session)):
+    if session.user.user_type_id != 1:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    return session

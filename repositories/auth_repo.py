@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from models.auth_model import  Users,UserProfie,Sessions
+from models.auth_model import  Users,UserProfie,Sessions,UserTypes
 import uuid
 from datetime import datetime, timedelta, timezone
 
@@ -55,3 +55,29 @@ class UserRepository:
         user = db.query(Users).filter(Users.id == userId).first()
         user.password_hash = newPassword
         db.commit()
+
+        # add to auth_repo.py
+    def get_all_sessions(self, db: Session):
+        return db.query(Sessions).all()
+
+    def delete_user(self, db: Session, userId: str):
+        db.query(Sessions).filter(Sessions.user_id == userId).delete()
+        db.query(UserProfie).filter(UserProfie.user_id == userId).delete()
+        db.query(Users).filter(Users.id == userId).delete()
+        db.commit()
+
+    def delete_session_by_id(self, db: Session, sessionId: str):
+        db.query(Sessions).filter(Sessions.id == sessionId).delete()
+        db.commit()
+
+    def update_user(self, db: Session, userId: str, updateRequest):
+        user = db.query(Users).filter(Users.id == userId).first()
+        user.username = updateRequest.username
+        user.email = updateRequest.email
+        user.user_type_id = updateRequest.user_type_id
+        db.commit()
+        db.refresh(user)
+        return user
+    
+    def get_all_user_types(self, db: Session):
+        return db.query(UserTypes).all()

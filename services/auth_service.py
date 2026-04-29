@@ -93,3 +93,4 @@ class AuthService:
         newPassword = hashPassword(resetRequest.newPassword)
         self.authRepo.update_password(db, userId,newPassword )
         return {"message": "Password updated successfully"}
+    
