@@ -3,7 +3,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from controllers import test_controller
 from controllers import auth_controller
 from controllers import user_controller
-from controllers import challenge_controller                                # Sam Addition
 from controllers import admin_controller
 from database.db import engine, Base
 import uvicorn
@@ -24,7 +23,6 @@ Base.metadata.create_all(bind=engine)
 app.include_router(test_controller.router)
 app.include_router(auth_controller.router)
 app.include_router(user_controller.router)
-app.include_router(challenge_controller.router)                             # Sam Addition
 app.include_router(admin_controller.router)
 
 if __name__ == "__main__":
