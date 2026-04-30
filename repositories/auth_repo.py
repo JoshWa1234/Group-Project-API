@@ -81,3 +81,13 @@ class UserRepository:
     
     def get_all_user_types(self, db: Session):
         return db.query(UserTypes).all()
+    
+    def create_user_profile(self, db: Session, userId: str):
+        profile = UserProfie(
+            user_id=userId,
+            display_name='',
+            profile_picture='',
+            updated_at=datetime.now(timezone.utc)
+        )
+        db.add(profile)
+        db.commit()

@@ -55,6 +55,13 @@ class AuthService:
         #check user exists
         default_user_type = settings.default_user_type_id
 
+        existing_user = self.authRepo.get_user_by_username(db, loginRequest.email)
+        if existing_user:
+            return LoginResponse(
+                errorMessage="An account with this email already exists",
+                statusCode=409
+            )
+
         if not validatePassword(loginRequest.password):
             return LoginResponse(
                 errorMessage='User password does not meet minimum security requirments',
@@ -74,14 +81,15 @@ class AuthService:
             )
 
         self.authRepo.insert_new_user(db,newUser)
-
+        self.authRepo.create_user_profile(db, newUser.id) 
         #set token for sessions
-        self.setUpToken(response)
+        self.setUpToken(response,newUser.id,db)
 
         return LoginResponse(
             user=UserSchema.model_validate(newUser),
             statusCode=200
         )
+    
     def resetPassword(self, db: Session, userId: str, resetRequest: ResetPasswordRequest):
         user = self.authRepo.get_user_by_id(db, userId)
         if user is None:
